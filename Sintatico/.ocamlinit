@@ -1,0 +1,16 @@
+let () =
+    try Topdirs.dir_directory (Sys.getenv "OCAML_TOPLEVEL_PATH")
+    with Not_found -> ()
+;;
+
+#use "topfind";;
+#require "menhirLib";;
+#directory "_build";;
+#load "sintatico.cmo";;
+#load "lexico.cmo";;
+#load "ast.cmo";;
+#load "sintaticoTest.cmo";;
+#load "erroSint.cmo";;
+open Sast
+open Ast
+open SintaticoTest

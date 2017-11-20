@@ -1,0 +1,8 @@
+ocamllex lexico.mll
+ocamlc -c lexico.ml
+
+Para usar:
+rlwrap ocaml
+
+#use "carregador.ml";;
+lex "teste.txt";;

@@ -1,0 +1,21 @@
+O analisador lexico teve que haver algumas mudanças para as mensagens de erro serem propagas no Sintatico
+Eu não entendi direito como que editava as msg de erro depois que era gerado o arquivo de erro
+por isso não o fiz
+
+utilizei a execução expressa para utilizar o sintaticoTest.byte para criar todos os executaveis
+
+
+comandos 
+
+
+/*
+    menhir -v --list-errors sintatico.mly > sintatico.msg
+    menhir -v sintatico.mly --compile-errors sintatico.msg > erroSint.ml
+    ocamlbuild -use-ocamlfind -use-menhir -menhir "menhir --table" -package menhirLib sintaticoTest.byte
+    rlwrap ocaml
+    parse_arq "nomedoarquivopontoextensao";;
+
+   Exemplo de erro Micro07.pas mostra um erro a onde usando o if then ele reclama por falta a marcação do inicio e do fim do bloco
+    com o begin end.
+
+*/
