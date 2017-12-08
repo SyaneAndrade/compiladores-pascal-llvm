@@ -19,6 +19,4 @@
 
    let (arv, amb) = verifica_tipos "exemplos/ex2.tip";;
 
-    
-
  *)

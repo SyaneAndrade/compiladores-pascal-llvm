@@ -115,7 +115,7 @@ let rec interpreta_exp amb exp =
          (match op with
           | Menor -> ExpBool (pega_string vesq < pega_string vdir, top)
           | Maior  -> ExpBool (pega_string vesq > pega_string vdir, top)
-          | Igual   -> ExpBool (pega_string vesq == pega_string vdir, top)
+          | Igual   -> ExpBool (pega_string vesq = pega_string vdir, top)
           | Difer   -> ExpBool (pega_string vesq != pega_string vdir, top)
           | MenorIgual -> ExpBool (pega_string vesq <= pega_string vdir, top)
           | MaiorIgual -> ExpBool (pega_string vesq >= pega_string vdir, top)
