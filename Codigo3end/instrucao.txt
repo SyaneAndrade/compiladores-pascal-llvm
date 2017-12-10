@@ -1,0 +1,8 @@
+ocamlbuild -use-ocamlfind -use-menhir -menhir "menhir --table" -package menhirLib semanticoTest.byte
+   rlwrap ocaml
+   
+   #use "Cod3End.ml";;
+
+let (arv,tab) = verifica_tipos "exemplos/Tipos/ex7.tip";;
+
+   teste arv;;
