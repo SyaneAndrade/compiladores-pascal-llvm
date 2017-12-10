@@ -218,6 +218,19 @@ let rec traduz_cmd cmd =
               [rotulo_falso] @ codigo_senao @
               [rotulo_fim]
     )
+
+ | CmdWhile (teste, cmd) ->
+    let (endr_teste, codigo) = traduz_exp teste 
+    and codigo_cmd = traduz_cmds cmd
+    and rotulo_while = novo_rotulo "L"
+    and rotulo_falso = novo_rotulo "L" in
+    [rotulo_while] @
+    codigo @ 
+    [If (endr_teste, rotulo_falso)] @
+    codigo_cmd @
+    [Goto rotulo_while] @
+    [rotulo_falso]
+
   | CmdChamada (ExpChamada (id, args, tipo_fn)) -> 
       let (enderecos, codigos) = List.split (List.map traduz_exp args) in
       let tipos = List.map pega_tipo args in
@@ -231,6 +244,30 @@ let rec traduz_cmd cmd =
       let endr_tipos = List.combine enderecos tipos in
       (List.concat codigos) @
       [Call ("print", endr_tipos, TipoVoid)]
+          
+  | _ -> failwith "traduz_cmd: não implementado"
+
+  | CmdSaidaln args -> 
+      let (enderecos, codigos) = List.split (List.map traduz_exp args) in
+      let tipos = List.map pega_tipo args in
+      let endr_tipos = List.combine enderecos tipos in
+      (List.concat codigos) @
+      [Call ("println", endr_tipos, TipoVoid)]
+
+  | CmdEntrada args -> 
+      let (enderecos, codigos) = List.split (List.map traduz_exp args) in
+      let tipos = List.map pega_tipo args in
+      let endr_tipos = List.combine enderecos tipos in
+      (List.concat codigos) @
+      [Call ("read", endr_tipos, TipoVoid)]
+
+  | CmdEntradaln args -> 
+      let (enderecos, codigos) = List.split (List.map traduz_exp args) in
+      let tipos = List.map pega_tipo args in
+      let endr_tipos = List.combine enderecos tipos in
+      (List.concat codigos) @
+      [Call ("readln", endr_tipos, TipoVoid)]
+
           
   | _ -> failwith "traduz_cmd: não implementado"
     
