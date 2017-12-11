@@ -5,6 +5,6 @@ begin
 x := 2;
 if x = 1 then
 begin
-	writeln(x);
+	write(x);
 end
 end.

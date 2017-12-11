@@ -8,7 +8,7 @@ begin
     for x:= 1 to 5 do
         begin
             write('Digite um numero: ');
-            readln(num);
+            read(num);
             if (num >= 10) then
                 begin
                     if (num <= 150) then

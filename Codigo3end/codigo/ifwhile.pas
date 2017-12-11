@@ -9,11 +9,11 @@ while (z > x) do
 begin
 	if (x = y) then
 	begin
-		writeln(x);
+		write(x);
 	end
 	else
 	begin
-		writeln(0);
+		write(0);
 	z := z-1;
 	end;
 end;

@@ -14,39 +14,13 @@ ocamlfind ocamlc -c -package menhirLib -o errosint.cmo errosint.ml # cached
 # Target: lexico.ml.depends, tags: { extension:ml, file:lexico.ml, ocaml, ocamldep, package(menhirLib), quiet }
 ocamlfind ocamldep -package menhirLib -modules lexico.ml > lexico.ml.depends # cached
 # Target: sintatico.mly.depends, tags: { extension:mly, file:sintatico.mly, infer, menhir_ocamldep, ocaml, ocamldep, package(menhirLib), quiet }
-menhir --table --raw-depend --ocamldep 'ocamlfind ocamldep -modules' sintatico.mly > sintatico.mly.depends
-+ menhir --table --raw-depend --ocamldep 'ocamlfind ocamldep -modules' sintatico.mly > sintatico.mly.depends
-File "sintatico.mly", line 43, characters 25-34:
-Warning: the token PROCEDURE is unused.
-File "sintatico.mly", line 167, characters 39-60:
-Warning: symbol __anonymous_2 is unreachable from any of the start symbol(s).
-File "sintatico.mly", line 163, characters 0-5:
-Warning: symbol cases is unreachable from any of the start symbol(s).
-File "sintatico.mly", line 165, characters 0-12:
-Warning: symbol comando_case is unreachable from any of the start symbol(s).
-File "/usr/share/menhir/standard.mly", line 193, characters 8-21:
-Warning: symbol nonempty_list(cases) is unreachable from any of the start symbol(s).
-File "/usr/share/menhir/standard.mly", line 98, characters 8-14:
-Warning: symbol option(__anonymous_2) is unreachable from any of the start symbol(s).
+menhir --table --raw-depend --ocamldep 'ocamlfind ocamldep -modules' sintatico.mly > sintatico.mly.depends # cached
 # Target: sast.ml.depends, tags: { extension:ml, file:sast.ml, ocaml, ocamldep, package(menhirLib), quiet }
 ocamlfind ocamldep -package menhirLib -modules sast.ml > sast.ml.depends # cached
 # Target: sast.cmo, tags: { byte, compile, extension:cmo, extension:ml, file:sast.cmo, file:sast.ml, implem, ocaml, package(menhirLib), quiet }
 ocamlfind ocamlc -c -package menhirLib -o sast.cmo sast.ml # cached
 # Target: sintatico.mly, tags: { byte, compile, extension:ml, extension:mly, file:sintatico.ml, file:sintatico.mly, infer, menhir, ocaml, package(menhirLib), parser, quiet }
-menhir --table --ocamlc 'ocamlfind ocamlc -package menhirLib' --infer sintatico.mly
-+ menhir --table --ocamlc 'ocamlfind ocamlc -package menhirLib' --infer sintatico.mly
-File "sintatico.mly", line 43, characters 25-34:
-Warning: the token PROCEDURE is unused.
-File "sintatico.mly", line 167, characters 39-60:
-Warning: symbol __anonymous_2 is unreachable from any of the start symbol(s).
-File "sintatico.mly", line 163, characters 0-5:
-Warning: symbol cases is unreachable from any of the start symbol(s).
-File "sintatico.mly", line 165, characters 0-12:
-Warning: symbol comando_case is unreachable from any of the start symbol(s).
-File "/usr/share/menhir/standard.mly", line 193, characters 8-21:
-Warning: symbol nonempty_list(cases) is unreachable from any of the start symbol(s).
-File "/usr/share/menhir/standard.mly", line 98, characters 8-14:
-Warning: symbol option(__anonymous_2) is unreachable from any of the start symbol(s).
+menhir --table --ocamlc 'ocamlfind ocamlc -package menhirLib' --infer sintatico.mly # cached
 # Target: sintatico.mli.depends, tags: { extension:mli, file:sintatico.mli, ocaml, ocamldep, package(menhirLib), quiet }
 ocamlfind ocamldep -package menhirLib -modules sintatico.mli > sintatico.mli.depends # cached
 # Target: sintatico.cmi, tags: { byte, compile, extension:mli, file:sintatico.mli, interf, ocaml, package(menhirLib), quiet }

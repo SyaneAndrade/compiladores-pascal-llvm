@@ -7,7 +7,10 @@ type endereco =
      Nome of string
    | ConstInt of int
    | ConstFloat of float
+   | ConstString of string
+   | ConstBool of bool
    | Temp of int
+
 and instrucao =
      AtribBin of endereco * endereco * opBin * endereco  (* x = y op z *)
    | AtribUn  of endereco * opUn * endereco              (* x = op y   *)
@@ -64,6 +67,8 @@ let endr_to_str = function
    | Nome s -> s
    | ConstInt n -> string_of_int n
    | ConstFloat n -> string_of_float n
+   | ConstString s -> s
+   | ConstBool b -> string_of_bool b
    | Temp n  -> "t" ^ string_of_int n
 
 let tipo_to_str t =
@@ -146,6 +151,7 @@ let pega_tipo exp =
   | ExpReal (r, t) -> t
   | ExpVar (v, t) -> t
   | ExpString (s, t) -> t
+  | ExpBool (b, t) -> t
   | ExpOp ((op,t),_,_) -> t
   | ExpChamada (id, args, t) -> t
   | _ -> failwith "pega_tipo: não implementado"
@@ -156,9 +162,19 @@ let rec traduz_exp exp =
   | ExpInt (n, TipoInt) -> 
      let t = novo_temp () in
     (t, [Copia (t, ConstInt n)])
+  
   | ExpReal (r, TipoReal) ->
     let t = novo_temp () in
     (t, [Copia (t, ConstFloat r)])
+  
+  | ExpString (n, TipoString) -> 
+     let t = novo_temp () in
+    (t, [Copia (t, ConstString n)])
+
+  | ExpBool (b, TipoBool) -> 
+     let t = novo_temp () in
+    (t, [Copia (t, ConstBool b)])
+
   | ExpVar (v, tipo) ->
     (match v with
         VarSimples nome ->
@@ -166,6 +182,7 @@ let rec traduz_exp exp =
        ((Nome id), [])
      | _ -> failwith "traduz_exp: não implementado"
     )
+  
   | ExpOp (op, exp1, exp2) ->
     let (endr1, codigo1) = let (e1,t1) = exp1 in traduz_exp e1
     and (endr2, codigo2) = let (e2,t2) = exp2 in traduz_exp e2
@@ -231,25 +248,41 @@ let rec traduz_cmd cmd =
     [Goto rotulo_while] @
     [rotulo_falso]
 
+  | CmdFor (variavel, expressao1, expressao2, corpo) ->
+	let (endereco_variavel, codigo_variavel) = traduz_exp variavel
+	and (endereco_expressao1, codigo_expressao1) = traduz_exp expressao1
+	and (endereco_expressao2, codigo_expressao2) = traduz_exp expressao2
+	and codigo_corpo = traduz_cmds corpo
+	and rotulo_for = novo_rotulo "L"
+	and rotulo_false = novo_rotulo "L" in
+	
+	let tipo = (
+		match variavel with
+			| ExpVar(nome, t) -> t
+			| _ -> failwith "Nao foi possivel reconhecer o tipo no for"
+	) in
+		let teste = ExpOp((MenorIgual, tipo), (variavel, tipo), (expressao2, tipo)) in
+			let (endereco_teste, codigo_teste) = traduz_exp teste in
+				let incremento = ExpInt (1, TipoInt) in
+					let (endereco_incremento, codigo_incremento) = traduz_exp incremento in
+				
+						codigo_expressao1
+						@ codigo_variavel
+						@ [ Copia (endereco_variavel, endereco_expressao2) ]
+						@ [ rotulo_for ]
+						@ codigo_teste
+						@ [ IfFalse (endereco_teste, rotulo_false) ]
+						@ codigo_corpo
+						@ [ AtribBin (endereco_variavel, endereco_variavel, (Mais, tipo), endereco_incremento) ]  	(* x = y op z *)
+						@ [ Goto rotulo_for ]
+						@ [ rotulo_false ]
+
   | CmdChamada (ExpChamada (id, args, tipo_fn)) -> 
       let (enderecos, codigos) = List.split (List.map traduz_exp args) in
       let tipos = List.map pega_tipo args in
       let endr_tipos = List.combine enderecos tipos in
       (List.concat codigos) @
       [Call (id, endr_tipos, tipo_fn)]
-
-(*| CmdFor (cmdAtrib, num, cmd) ->
-    let (endr_num, codigo_num) = traduz_exp num
-    and cmd_atrb1 = traduz_cmd cmdAtrib
-    and codigo_cmd = traduz_cmds cmd
-    and novo_rotuloFor = novo_rotulo "L"
-    and rotulo_falso = novo_rotulo "L" in
-    [novo_rotuloFor] @
-    codigo_num @
-    [If (endr_num, rotulo_falso)] @
-    codigo_cmd @
-    [Goto novo_rotuloFor] @
-    [rotulo_falso]*)
   
   | CmdSaida args -> 
       let (enderecos, codigos) = List.split (List.map traduz_exp args) in
@@ -257,16 +290,7 @@ let rec traduz_cmd cmd =
       let endr_tipos = List.combine enderecos tipos in
       (List.concat codigos) @
       [Call ("print", endr_tipos, TipoVoid)]
-          
-  | _ -> failwith "traduz_cmd: não implementado"
-
-  | CmdSaidaln args -> 
-      let (enderecos, codigos) = List.split (List.map traduz_exp args) in
-      let tipos = List.map pega_tipo args in
-      let endr_tipos = List.combine enderecos tipos in
-      (List.concat codigos) @
-      [Call ("println", endr_tipos, TipoVoid)]
-
+    
   | CmdEntrada args -> 
       let (enderecos, codigos) = List.split (List.map traduz_exp args) in
       let tipos = List.map pega_tipo args in
@@ -274,13 +298,20 @@ let rec traduz_cmd cmd =
       (List.concat codigos) @
       [Call ("read", endr_tipos, TipoVoid)]
 
+
+  | CmdSaidaln args -> 
+      let (enderecos, codigos) = List.split (List.map traduz_exp args) in
+      let tipos = List.map pega_tipo args in
+      let endr_tipos = List.combine enderecos tipos in
+      (List.concat codigos) @
+      [Call ("print", endr_tipos, TipoVoid)]
+
   | CmdEntradaln args -> 
       let (enderecos, codigos) = List.split (List.map traduz_exp args) in
       let tipos = List.map pega_tipo args in
       let endr_tipos = List.combine enderecos tipos in
       (List.concat codigos) @
-      [Call ("readln", endr_tipos, TipoVoid)]
-
+      [Call ("read", endr_tipos, TipoVoid)]
           
   | _ -> failwith "traduz_cmd: não implementado"
     
