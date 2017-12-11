@@ -15,9 +15,6 @@ with Not_found -> ()
 #load "ambiente.cmo";;
 #load "semantico.cmo";;
 #load "errosint.cmo";;
-#load "ambInterp.cmo";;
-#load "interprete.cmo";;
-#load "interpreteTeste.cmo";;
 #load "semanticoTest.cmo";;
 
 open Ast

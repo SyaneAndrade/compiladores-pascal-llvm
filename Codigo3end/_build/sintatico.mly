@@ -163,7 +163,7 @@ comando_while: WHILE teste=expressao DO
 cases: e = expressao DOISPONTOS c = comando {Case(e,c)}
 
 comando_case: CASE teste=expressao OF 
-                        c = cases+ 
+                        c = cases + 
                         default=option(ELSE cs=comando* {cs})  
                         END PONTOVIRG {
                                 CmdCase(teste,c,default)
