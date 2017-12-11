@@ -238,6 +238,19 @@ let rec traduz_cmd cmd =
       (List.concat codigos) @
       [Call (id, endr_tipos, tipo_fn)]
 
+(*| CmdFor (cmdAtrib, num, cmd) ->
+    let (endr_num, codigo_num) = traduz_exp num
+    and cmd_atrb1 = traduz_cmd cmdAtrib
+    and codigo_cmd = traduz_cmds cmd
+    and novo_rotuloFor = novo_rotulo "L"
+    and rotulo_falso = novo_rotulo "L" in
+    [novo_rotuloFor] @
+    codigo_num @
+    [If (endr_num, rotulo_falso)] @
+    codigo_cmd @
+    [Goto novo_rotuloFor] @
+    [rotulo_falso]*)
+  
   | CmdSaida args -> 
       let (enderecos, codigos) = List.split (List.map traduz_exp args) in
       let tipos = List.map pega_tipo args in

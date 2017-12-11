@@ -100,13 +100,15 @@ declaracao_funcao: FUNCAO id = ID APAR p=parametros* FPAR DOISPONTOS tp = tipo_s
         bv = declaracao*
         BEGIN 
         lc = comando* 
-        END PONTOVIRG {Funcao{fn_nome=id;fn_prms=List.flatten p; fn_tiporeturn=tp;fn_locais= List.flatten bv;fn_cmds=lc} }
-	  	
-    (*|PROCEDURE id = ID APAR p = parametros FPAR tp= PONTOVIRG
-		bv = declaracao*
-		BEGIN
-		c = comando*
-		END PONTOVIRG {Funcao (id,p,tp,bv,c)}*)
+        END PONTOVIRG {
+                Funcao {
+                        fn_nome=id;
+                        fn_prms=List.flatten p; 
+                        fn_tiporeturn=tp;
+                        fn_locais= List.flatten bv;
+                        fn_cmds=lc
+                } 
+        }
 
 comando: c=comando_atribuicao { c } (*ok*)
        | c=comando_se         { c } (*ok*)
@@ -121,11 +123,18 @@ comando_atribuicao: v=expressao ATRIB e=expressao PONTOVIRG {CmdAtrib (v,e)}
 	           
 (* Atribuição ok!*)
 
-(*comando_funcao: |id = ID APAR p=option(arg=separated_nonempty_list(VIRG,expressao) {arg}) FPAR {CmdChamadaFuncao (id, p)}*)
 comando_funcao: exp=chamada 	{ CmdChamada exp }
-comando_se:IF teste=expressao THEN BEGIN entao = comando* END
-               senao=option(ELSE BEGIN cs=comando* END PONTOVIRG {cs} )
-		{CmdSe (teste, entao, senao)}
+
+comando_se:IF teste=expressao THEN 
+                BEGIN 
+                entao = comando* 
+                END
+               senao=option(ELSE 
+                            BEGIN 
+                            cs=comando* 
+                            END PONTOVIRG {cs} ){
+                        CmdSe (teste, entao, senao)
+                }
 
 (* IFS OK *)
 
@@ -137,14 +146,28 @@ comando_saida: PRINT APAR xs=separated_nonempty_list(VIRG, expressao) FPAR PONTO
 	       |PRINTLN APAR cs=separated_nonempty_list(VIRG, expressao) FPAR PONTOVIRG { CmdSaidaln cs}
 (* Saída ok!*)
 
-(*comando_for: FOR  v=variavel ATRIB ex=expressao TO e=expressao DO BEGIN c=comando* END PONTOVIRG { CmdFor(v,ex,e,c) }*)
-comando_for: FOR ca=comando_atribuicao TO e=expressao DO c=comando {CmdFor(ca, e, c)}
-comando_while: WHILE teste=expressao DO BEGIN c=comando* END PONTOVIRG {CmdWhile(teste,c)}
+comando_for: FOR  v=expressao ATRIB ex=expressao TO e=expressao DO 
+                              BEGIN 
+                                 c = comando * 
+                                END PONTOVIRG { 
+                                        CmdFor(v, ex, e, c) 
+                                }
 
-(*comando_case: CASE v=variavel OF c = cases+ default=option(ELSE cs=comando {cs})  END PONTOVIRG {CmdCase(v,c,default)} (*Shift-reduce a corrigir*)*)
+comando_while: WHILE teste=expressao DO 
+                        BEGIN 
+                                c=comando* 
+                        END PONTOVIRG {
+                                CmdWhile(teste,c)
+                        }
 
-(*cases: e = expressao DOISPONTOS c = comando {Case(e,c)}*)
+cases: e = expressao DOISPONTOS c = comando {Case(e,c)}
 
+comando_case: CASE teste=expressao OF 
+                        c = cases+ 
+                        default=option(ELSE cs=comando* {cs})  
+                        END PONTOVIRG {
+                                CmdCase(teste,c,default)
+                        }
 args: APAR FPAR { [] }
 	| APAR seq=seq_args FPAR { seq }
 seq_args: e=expressao { [e] }

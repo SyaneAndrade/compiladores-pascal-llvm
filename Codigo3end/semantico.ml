@@ -225,39 +225,34 @@ let rec verifica_cmd amb tiporet cmd =
     let cmd1 = (List.map(verifica_cmd amb tiporet) cmd) in
     CmdWhile(teste1, cmd1)
 
-  | CmdFor (cmdAtrib, num, cmd) ->
-    let cmdAtrib1 = verifica_cmd amb tiporet cmdAtrib in
-    let (num1,tinf) = infere_exp amb num in
-    (* O tipo inferido para a expressão 'teste' do condicional deve ser booleano *)
-    let _ = mesmo_tipo (posicao num)
-             "O teste do for deveria ser do tipo %s e nao %s"
-             TipoInt tinf in
-    (* Verifica a validade de cada comando do bloco 'então' *)
-    let cmd1 = verifica_cmd amb tiporet cmd in
-    CmdFor(cmdAtrib1, num1, cmd1)
+| CmdFor (variavel, valorInicial, valorFinal, corpo) ->
+	(* Infere o tipo da variavel *)
+	let (variavel1, tvariavel) = infere_exp amb variavel
+	
+	(* Infere o tipo do valorInicial *)
+	and (valorInicial1, tvalorInicial) = infere_exp amb valorInicial in
+	
+	let _ = mesmo_tipo (posicao variavel) "Variavel de controle do tipo %s e valor inicial do tipo %s" tvariavel tvalorInicial in
 
 
+	(* Infere o tipo do valorFinal *)
+	let (valorFinal1, tvalorFinal) = infere_exp amb valorFinal in
 
-   | CmdAtrib (elem, exp) ->
-    (* Infere o tipo da expressão no lado direito da atribuição *)
-    let (exp,  tdir) = infere_exp amb exp
-    (* Faz o mesmo para o lado esquerdo *)
-    and (elem1, tesq) = infere_exp amb elem in
-    (* Os dois tipos devem ser iguais *)
-    let _ = mesmo_tipo (posicao elem)
-                       "Atribuicao com tipos diferentes: %s = %s" tesq tdir
-    in CmdAtrib (elem1, exp)
-(*
-  | CmdChamada exp ->
-     let (exp,tinf) = infere_exp amb exp in
-     CmdChamada exp
-*)
-  (*| CmdAtrib (elem, exp) -> let open Amb in
+	let _ = mesmo_tipo (posicao valorInicial) "Valor inicial do tipo %s e final do tipo %s" tvalorInicial tvalorFinal in
+
+	(* Verifica a validade de cada comando do bloco 'corpo' *)
+    let corpo1 = List.map (verifica_cmd amb tiporet) corpo in
+
+	CmdFor(variavel1, valorInicial1, valorFinal1, corpo1)
+
+  | CmdAtrib (elem, exp) -> let open Amb in
             let  (exp2, tdir) = infere_exp amb exp in
             (match elem with
                 S.ExpVar v ->
+                (match v with
+                  | A.VarSimples(ch, _) ->
                   ( try 
-                    (match (Amb.busca amb (fst v)) with
+                    (match (Amb.busca amb ch) with
                             Amb.EntVar tipo -> let (elem_tip, telem) = infere_exp amb elem
                                 and (exp_tip, ttip) = infere_exp amb exp in
                                 let _ = mesmo_tipo (posicao elem) "Atribuicao com tipos diferentes: %s = %s" 
@@ -274,11 +269,35 @@ let rec verifica_cmd amb tiporet cmd =
                                               
                                     )
                         ) 
-                    with Not_found -> failwith ("A variável " ^ fst v ^ " não foi declarada")
+                    with Not_found -> failwith ("A variável " ^ ch ^ " não foi declarada")
                   )
+          )
              | _ -> failwith ""
-            )
-  *)
+)
+
+| CmdCase (teste, corpo, senao) ->
+	(* Infere o tipo da variavel a ser tomada no case *)
+	let (teste1,tinf) = infere_exp amb teste in
+
+	(* Verifica a validade de cada comando do bloco 'corpo' *)
+    let corpo1 = List.map (verifica_cmd amb tiporet) corpo in
+
+	 (* Verifica a validade de cada comando do bloco 'senão', se houver *)
+	let senao1 =
+        match senao with
+          None -> None
+        | Some bloco -> Some (List.map (verifica_cmd amb tiporet) bloco)
+    in
+	CmdCase(teste1, corpo1, senao1)
+
+  | Case (expressao, comando) ->
+	 (* Verifica a validade da expressao *)
+	let (expressao1,tinf) = infere_exp amb expressao in
+
+    (* Verifica a validade de cada comando do bloco 'comandos' *)
+    let comando1 = verifica_cmd amb tiporet comando in
+	Case (expressao1, comando1)
+
   | CmdChamada exp ->
      let (exp,tinf) = infere_exp amb exp in
      CmdChamada exp
