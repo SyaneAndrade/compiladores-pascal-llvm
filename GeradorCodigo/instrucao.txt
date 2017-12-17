@@ -1,0 +1,48 @@
+intruções lexico
+ocamllex lexico.mll
+ocamlc -c lexico.ml
+
+Para usar:
+rlwrap ocaml
+
+#use "carregador.ml";;
+lex "teste.txt";;
+
+Intruções Sintatico
+
+ocamlbuild -use-ocamlfind -use-menhir -menhir "menhir --table" -package menhirLib sintaticoTest.byte
+    rlwrap ocaml
+    parse_arq "nomedoarquivopontoextensao";;
+
+Intruções semantico
+
+ocamlbuild -use-ocamlfind -use-menhir -menhir "menhir --table" -package menhirLib semanticoTest.byte
+   rlwrap ocaml
+   
+Para usar, entre no ocaml 
+
+     rlwrap ocaml
+
+   e se desejar ver apenas a árvore sintática que sai do analisador sintático, digite
+
+     parse_arq "exemplos/ex2.tip";;
+
+   Depois, para ver a saída do analisador semântico já com a árvore anotada com 
+   o tipos, digite:
+
+   verifica_tipos "exemplos/ex2.tip";;
+
+   Note que o analisador semântico está retornando também o ambiente global. Se 
+   quiser separá-los, digite:
+
+   let (arv, amb) = verifica_tipos "exemplos/ex2.tip";;
+
+Intruções Cod3End
+
+ocamlbuild -use-ocamlfind -use-menhir -menhir "menhir --table" -package menhirLib semanticoTest.byte
+
+   #use "Cod3End.ml";;
+
+let (arv,tab) = verifica_tipos "exemplos/Tipos/ex7.tip";;
+
+   teste arv;;

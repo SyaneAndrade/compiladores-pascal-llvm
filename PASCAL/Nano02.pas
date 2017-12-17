@@ -1,6 +1,5 @@
-program nano02 ;
+program nano02;
 
-Var n : Integer;
-
+Var n: Integer;
 Begin
 End.

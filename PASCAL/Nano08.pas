@@ -1,9 +1,8 @@
-program nano08 ;
+program nano08;
 
-Var n : Integer;
-
+Var n: Integer;
 begin
-    n := 1 ;
+    n := 1;
     if (n = 1) then
         writeln(n)
     else

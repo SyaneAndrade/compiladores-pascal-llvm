@@ -1,4 +1,4 @@
-Program nano01 ;
+Program nano01;
 
 Begin
 End.

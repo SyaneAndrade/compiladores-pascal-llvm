@@ -1,8 +1,7 @@
 program nano06;
 
-var n : Integer;
-
+var n: Integer;
 begin
-    n:= 1-2;
+    n:= 1 - 2;
     writeln(n);
 end.

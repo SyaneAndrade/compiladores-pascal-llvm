@@ -1,7 +1,6 @@
-program nano10 ;
+program nano10;
 
-Var n , m: Integer;
-
+Var n, m: Integer;
 begin
     n := 1;
     m := 2;
@@ -9,4 +8,4 @@ begin
         writeln(n)
     else
         writeln(0);
-end .
+end.

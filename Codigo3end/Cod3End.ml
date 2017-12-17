@@ -243,7 +243,7 @@ let rec traduz_cmd cmd =
     and rotulo_falso = novo_rotulo "L" in
     [rotulo_while] @
     codigo @ 
-    [If (endr_teste, rotulo_falso)] @
+    [IfFalse (endr_teste, rotulo_falso)] @
     codigo_cmd @
     [Goto rotulo_while] @
     [rotulo_falso]

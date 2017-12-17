@@ -1,4 +1,4 @@
-program nano03 ;
+program nano03;
 
 Var n : Integer;
 
