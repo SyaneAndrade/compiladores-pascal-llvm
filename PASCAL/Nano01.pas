@@ -1,4 +1,4 @@
-Program nano01;
+program nano01;
 
-Begin
-End.
+begin
+end.

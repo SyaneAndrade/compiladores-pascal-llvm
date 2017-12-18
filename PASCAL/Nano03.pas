@@ -1,6 +1,7 @@
 program nano03;
 
-Var n : Integer;
+var
+    n : integer;
 
 begin
     n := 1;

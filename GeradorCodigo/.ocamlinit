@@ -16,7 +16,12 @@ with Not_found -> ()
 #load "semantico.cmo";;
 #load "errosint.cmo";;
 #load "semanticoTest.cmo";;
+#load "Codigo.cmo";;
+#load "Cod3End.cmo";;
+#load "cod3endTest.cmo";;
 
 open Ast
 open Ambiente
-open SemanticoTest
+open Codigo
+open Cod3End
+open Cod3endTest
